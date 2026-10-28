@@ -1,0 +1,74 @@
+/* styles/theme.css */
+@theme {
+  /* ANC Healthcare Primary Accent Ramp (#007AFF Base) */
+  --color-accent-50: #e5f1ff;
+  --color-accent-100: #cce4ff;
+  --color-accent-200: #99c9ff;
+  --color-accent-300: #66adff;
+  --color-accent-400: #3392ff;
+  --color-accent-500: #007aff; /* Brand Primary */
+  --color-accent-600: #0062cc;
+  --color-accent-700: #004999;
+  --color-accent-800: #003166;
+  --color-accent-900: #001833;
+  --color-accent-950: #000c1a;
+  
+  /* Font Family Override */
+  --font-sans: "Clash Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  /* BoardUI Chip Status Colors (utilities: bg-status-*-background / text-status-*-text) */
+  --color-status-lime-background: #d9f99d;
+  --color-status-lime-text: #365314;
+  --color-status-cyan-background: #a5f3fc;
+  --color-status-cyan-text: #0e7490;
+  --color-status-rose-background: #fecdd3;
+  --color-status-rose-text: #9f1239;
+  --color-status-yellow-background: #fef08a;
+  --color-status-yellow-text: #854d0e;
+  --color-status-orange-background: #fed7aa;
+  --color-status-orange-text: #9a3412;
+  --color-status-blue-background: #bae6fd;
+  --color-status-blue-text: #0369a1;
+  --color-status-purple-background: #e9d5ff;
+  --color-status-purple-text: #6b21a8;
+}
+
+/* styles/theme.css */
+
+:root {
+  /* ---------------- Foreground ---------------- */
+  --color-foreground-full: #ffffff;
+  --color-foreground-icon-primary: #101828;
+  --color-foreground-icon-secondary: #667085;
+  --color-foreground-icon-tertiary: #98a2b3;
+
+  /* ---------------- Text ---------------- */
+  --color-text-primary: #101828;
+  --color-text-secondary: #475467;
+  --color-text-tertiary: #667085;
+  --color-text-placeholder: #98a2b3;
+  --color-text-disabled: #d0d5dd;
+
+  /* ---------------- Backgrounds & Surfaces ---------------- */
+  /* Outer canvas neutral background */
+  --color-background-full: #f8fafc; /* Clean neutral grey canvas */
+  --color-background-primary-default: #ffffff; /* Solid white card surface */
+  --color-background-primary-hover: #f1f5f9;
+  --color-background-secondary-default: #e2e8f0;
+  --color-background-secondary-hover: #e2e8f0;
+  --color-background-tertiary-default: #f1f5f9;
+
+/* ---------------- Borders & Separators (neutral-200) ---------------- */
+--color-border-button-default: #e5e5e5;
+--color-border-button-hover: #d4d4d4;
+--color-border-button-active: #a3a3a3;
+--color-border-component-detail-container: #e5e5e5;
+--color-border-checkbox-default: #e5e5e5;
+--color-border-table: #e5e5e5;
+--color-separator-border: #e5e5e5;
+--color-separator-border-strong: #e5e5e5;
+
+
+  /* Focus ring */
+  --color-border-focus-ring: #007aff;
+}

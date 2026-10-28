@@ -1,0 +1,1092 @@
+@import "tailwindcss";
+@import "./theme.css";
+@import "./typography.css";
+
+/* ---------------------------------------------------------------------------
+ * Dark mode strategy
+ *
+ * We use a class-based dark variant. Toggle dark mode by adding the `.dark`
+ * class to <html> (a theme provider like `next-themes` can do this later).
+ *
+ *   <html class="dark">  →  every `dark:*` utility activates
+ *
+ * Components should NOT use `dark:` prefixes directly. Instead they reference
+ * semantic color tokens (e.g. `bg-bg-primary`, `text-text-primary`) that flip
+ * under `.dark` in styles/theme.css.
+ * --------------------------------------------------------------------------- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Resolve the nearest direction boundary, including nested LTR regions.
+ * Tailwind's ancestor-based defaults also match inside an opposing region. */
+@custom-variant rtl (&:dir(rtl));
+@custom-variant ltr (&:dir(ltr));
+
+/* The next theme is revealed by ThemeToggle from the exact interaction point.
+ * Native view-transition crossfades are disabled so only the soft circular
+ * clip-path animation runs; unsupported browsers simply ignore these rules. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@keyframes ai-chat-text-shimmer {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -100% center;
+  }
+}
+
+.agent-progress-loading-text {
+  color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    var(--color-text-secondary) 16%,
+    var(--color-text-secondary) 38%,
+    var(--color-text-primary) 50%,
+    var(--color-text-secondary) 62%,
+    var(--color-text-secondary) 84%
+  );
+  background-position: 200% center;
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: ai-chat-text-shimmer 3.4s linear infinite;
+  will-change: background-position;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-progress-loading-text {
+    color: var(--color-text-secondary);
+    background-image: none;
+    animation: none;
+  }
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Components often have their own hover/focus color transitions. Freeze them
+ * while the browser captures the next theme so the expanding circle contains
+ * the fully resolved new palette instead of a frame that is still fading from
+ * the old one. This is what makes the click-origin reveal read clearly. */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: none !important;
+}
+
+/* Reset + base */
+html,
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-variant-ligatures: contextual;
+  font-kerning: normal;
+}
+
+html {
+  color-scheme: light;
+  background-color: var(--color-background-full);
+}
+html.dark {
+  color-scheme: dark;
+}
+body {
+  background-color: var(--color-background-full);
+  color: var(--color-text-primary);
+}
+
+/* Theme-aware monochrome BoardUI mark. Both images keep their intrinsic
+ * dimensions while the root theme class decides which one participates in
+ * layout, avoiding a light-logo flash during hydration. */
+.theme-logo-dark,
+.theme-asset-dark {
+  display: none;
+}
+.dark .theme-logo-light,
+.dark .theme-asset-light {
+  display: none;
+}
+.dark .theme-logo-dark,
+.dark .theme-asset-dark {
+  display: block;
+}
+
+/* Tailwind expands shadow utilities into `--tw-shadow` at build time. Point
+ * those generated utilities back to the live dark elevation tokens so the
+ * class-based theme can adjust opacity without component-level overrides. */
+@utility shadow-2xs {
+  &:where(.dark .shadow-2xs) {
+    --tw-shadow: var(--shadow-2xs);
+  }
+}
+@utility shadow-xs {
+  &:where(.dark .shadow-xs) {
+    --tw-shadow: var(--shadow-xs);
+  }
+}
+@utility shadow-sm {
+  &:where(.dark .shadow-sm) {
+    --tw-shadow: var(--shadow-sm);
+  }
+}
+@utility shadow-md {
+  &:where(.dark .shadow-md) {
+    --tw-shadow: var(--shadow-md);
+  }
+}
+@utility shadow-lg {
+  &:where(.dark .shadow-lg) {
+    --tw-shadow: var(--shadow-lg);
+  }
+}
+@utility shadow-xl {
+  &:where(.dark .shadow-xl) {
+    --tw-shadow: var(--shadow-xl);
+  }
+}
+@utility shadow-card {
+  &:where(.dark .shadow-card) {
+    --tw-shadow: var(--shadow-card);
+  }
+}
+@utility shadow-dropdown {
+  &:where(.dark .shadow-dropdown) {
+    --tw-shadow: var(--shadow-dropdown);
+  }
+}
+@utility shadow-sidebar {
+  &:where(.dark .shadow-sidebar) {
+    --tw-shadow: var(--shadow-sidebar);
+  }
+}
+@utility shadow-waitlist {
+  &:where(.dark .shadow-waitlist) {
+    --tw-shadow: var(--shadow-waitlist);
+  }
+}
+
+/* Hide default expand arrow on Safari */
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Hide default number-input spinners */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Hide default search clear button */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* iOS Safari auto-zooms the page when a focused form field's font-size is
+ * under 16px — our text-body-regular/medium tokens are 14px by design, so
+ * bump just the font-size (not the whole token) on small screens instead of
+ * changing the design system's type scale. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Soft fade applied to an animated number each time its target changes */
+@keyframes number-fade {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-number-fade {
+  animation: number-fade 220ms ease-out;
+}
+
+/* Recharts wrapper overrides */
+.recharts-wrapper {
+  direction: ltr;
+}
+
+.recharts-wrapper:focus,
+.recharts-wrapper:focus-visible,
+.recharts-wrapper :focus,
+.recharts-wrapper :focus-visible {
+  outline: none;
+}
+
+/* Liquid glass effects */
+.landing-glass-stroke {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: var(--lg-rim-width, 1.5px);
+  background: conic-gradient(
+    from var(--lg-rim-angle, 0deg),
+    var(--lg-rim-hi, rgb(255 255 255 / 0.9)) 0deg,
+    var(--lg-rim-sh, rgb(0 0 0 / 0.14)) 70deg,
+    var(--lg-rim-dim, rgb(255 255 255 / 0.1)) 140deg,
+    var(--lg-rim-bounce, rgb(255 255 255 / 0.55)) 180deg,
+    var(--lg-rim-dim, rgb(255 255 255 / 0.1)) 220deg,
+    var(--lg-rim-sh, rgb(0 0 0 / 0.14)) 290deg,
+    var(--lg-rim-hi, rgb(255 255 255 / 0.9)) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: var(--lg-rim-o, 1);
+  transition: opacity var(--lg-ms, 200ms) ease;
+}
+
+.lg-tint {
+  background-color: var(--lg-tint, transparent);
+  transition: background-color var(--lg-ms, 200ms) ease;
+}
+
+.lg-sheen {
+  opacity: var(--lg-sheen, 0.5);
+  transition: opacity var(--lg-ms, 200ms) ease;
+}
+
+.lg-host {
+  box-shadow: var(--lg-shadow, none);
+  transition:
+    box-shadow var(--lg-ms, 200ms) ease,
+    transform var(--lg-ms, 200ms) ease;
+}
+
+.lg-host:hover {
+  box-shadow: var(--lg-shadow-hover, var(--lg-shadow, none));
+  transform: translateY(var(--lg-lift, 0px)) scale(var(--lg-scale, 1));
+}
+
+.group:hover .lg-tint.lg-hover {
+  background-color: var(--lg-tint-hover, var(--lg-tint, transparent));
+}
+
+.group:hover .lg-sheen.lg-hover {
+  opacity: var(--lg-sheen-hover, var(--lg-sheen, 0.5));
+}
+
+.group:hover .landing-glass-stroke.lg-hover {
+  opacity: var(--lg-rim-o-hover, var(--lg-rim-o, 1));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-tint,
+  .lg-sheen,
+  .lg-host,
+  .landing-glass-stroke {
+    transition: none;
+  }
+
+  .lg-host:hover {
+    transform: none;
+  }
+}
+
+/* Split-flap animations */
+@keyframes flap-fall {
+  from {
+    transform: rotateX(0deg);
+    filter: brightness(1);
+  }
+  to {
+    transform: rotateX(-90deg);
+    filter: brightness(0.86);
+  }
+}
+@keyframes flap-rise {
+  0% {
+    transform: rotateX(90deg);
+    filter: brightness(0.86);
+  }
+  70% {
+    transform: rotateX(-9deg);
+  }
+  86% {
+    transform: rotateX(4deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+    filter: brightness(1);
+  }
+}
+.animate-flap-fall {
+  transform-origin: bottom center;
+  backface-visibility: hidden;
+  animation: flap-fall 150ms cubic-bezier(0.55, 0, 0.9, 0.35) forwards;
+}
+.animate-flap-rise {
+  transform-origin: top center;
+  backface-visibility: hidden;
+  animation: flap-rise 230ms cubic-bezier(0.25, 0.7, 0.35, 1) 150ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flap-fall,
+  .animate-flap-rise {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
+
+/* Table row entrance/exit animations */
+@keyframes row-grow-in {
+  from {
+    grid-template-rows: 0fr;
+  }
+  to {
+    grid-template-rows: 1fr;
+  }
+}
+@keyframes row-slide-in {
+  from {
+    translate: 0 -100%;
+  }
+}
+@keyframes row-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+.animate-row-grow-in {
+  animation: row-grow-in 400ms ease-out;
+}
+.animate-row-slide-in {
+  animation:
+    row-slide-in 400ms ease-out,
+    row-fade-in 240ms ease-out;
+}
+
+@keyframes row-collapse-out {
+  from {
+    grid-template-rows: 1fr;
+  }
+  to {
+    grid-template-rows: 0fr;
+  }
+}
+@keyframes row-slide-out {
+  to {
+    translate: 0 -100%;
+  }
+}
+@keyframes row-fade-out {
+  to {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+.animate-row-collapse-out {
+  animation: row-collapse-out 225ms ease-in forwards;
+}
+.animate-row-slide-out {
+  animation:
+    row-slide-out 225ms ease-in forwards,
+    row-fade-out 160ms ease-in forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-row-grow-in,
+  .animate-row-slide-in,
+  .animate-row-collapse-out,
+  .animate-row-slide-out {
+    animation-duration: 1ms;
+  }
+}
+
+/* Stagger text entrance */
+.t-stagger {
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.t-stagger-line {
+  opacity: 0;
+  transform: translateY(var(--stagger-distance));
+  filter: blur(var(--stagger-blur));
+  transition:
+    opacity var(--stagger-dur) var(--stagger-ease),
+    transform var(--stagger-dur) var(--stagger-ease),
+    filter var(--stagger-dur) var(--stagger-ease);
+  will-change: transform, opacity, filter;
+}
+.t-stagger-line--2 {
+  transition-delay: var(--stagger-stagger);
+}
+.t-stagger-line--3 {
+  transition-delay: calc(var(--stagger-stagger) * 2);
+}
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+.t-stagger.is-hiding .t-stagger-line {
+  opacity: 0;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 200ms ease,
+    transform 0s linear,
+    filter 0s linear;
+  transition-delay: 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-stagger-line {
+    transition: none !important;
+  }
+}
+
+/* Rolling counter */
+@keyframes label-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
+@keyframes label-in {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-label-out {
+  animation: label-out 220ms ease-out forwards;
+}
+.animate-label-in {
+  animation: label-in 220ms ease-out;
+}
+
+/* Checkbox tick */
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.animate-check-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: check-draw 200ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-check-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Chart entrance animations & Heatmaps
+ * ------------------------------------------------------------------------- */
+.contributions-grid {
+  --contribution-tier-0: var(--color-chart-neutral);
+}
+.contributions-grid[data-accent="emerald"] {
+  --contribution-tier-1: var(--color-emerald-200); --contribution-tier-2: var(--color-emerald-400); --contribution-tier-3: var(--color-emerald-500); --contribution-tier-4: var(--color-emerald-600); --contribution-tier-5: var(--color-emerald-700);
+}
+.contributions-grid[data-accent="green"] {
+  --contribution-tier-1: var(--color-green-200); --contribution-tier-2: var(--color-green-400); --contribution-tier-3: var(--color-green-500); --contribution-tier-4: var(--color-green-600); --contribution-tier-5: var(--color-green-700);
+}
+.contributions-grid[data-accent="teal"] {
+  --contribution-tier-1: var(--color-teal-200); --contribution-tier-2: var(--color-teal-400); --contribution-tier-3: var(--color-teal-500); --contribution-tier-4: var(--color-teal-600); --contribution-tier-5: var(--color-teal-700);
+}
+.contributions-grid[data-accent="cyan"] {
+  --contribution-tier-1: var(--color-cyan-200); --contribution-tier-2: var(--color-cyan-400); --contribution-tier-3: var(--color-cyan-500); --contribution-tier-4: var(--color-cyan-600); --contribution-tier-5: var(--color-cyan-700);
+}
+.contributions-grid[data-accent="blue"] {
+  --contribution-tier-1: var(--color-blue-200); --contribution-tier-2: var(--color-blue-400); --contribution-tier-3: var(--color-blue-500); --contribution-tier-4: var(--color-blue-600); --contribution-tier-5: var(--color-blue-700);
+}
+.contributions-grid[data-accent="indigo"] {
+  --contribution-tier-1: var(--color-indigo-200); --contribution-tier-2: var(--color-indigo-400); --contribution-tier-3: var(--color-indigo-500); --contribution-tier-4: var(--color-indigo-600); --contribution-tier-5: var(--color-indigo-700);
+}
+.contributions-grid[data-accent="violet"] {
+  --contribution-tier-1: var(--color-violet-200); --contribution-tier-2: var(--color-violet-400); --contribution-tier-3: var(--color-violet-500); --contribution-tier-4: var(--color-violet-600); --contribution-tier-5: var(--color-violet-700);
+}
+.contributions-grid[data-accent="rose"] {
+  --contribution-tier-1: var(--color-rose-200); --contribution-tier-2: var(--color-rose-400); --contribution-tier-3: var(--color-rose-500); --contribution-tier-4: var(--color-rose-600); --contribution-tier-5: var(--color-rose-700);
+}
+.contributions-grid[data-accent="amber"] {
+  --contribution-tier-1: var(--color-amber-200); --contribution-tier-2: var(--color-amber-400); --contribution-tier-3: var(--color-amber-500); --contribution-tier-4: var(--color-amber-600); --contribution-tier-5: var(--color-amber-700);
+}
+
+.dark .contributions-grid[data-accent="emerald"] {
+  --contribution-tier-1: var(--color-emerald-950); --contribution-tier-2: var(--color-emerald-800); --contribution-tier-3: var(--color-emerald-700); --contribution-tier-4: var(--color-emerald-600); --contribution-tier-5: var(--color-emerald-500);
+}
+.dark .contributions-grid[data-accent="green"] {
+  --contribution-tier-1: var(--color-green-950); --contribution-tier-2: var(--color-green-800); --contribution-tier-3: var(--color-green-700); --contribution-tier-4: var(--color-green-600); --contribution-tier-5: var(--color-green-500);
+}
+.dark .contributions-grid[data-accent="teal"] {
+  --contribution-tier-1: var(--color-teal-950); --contribution-tier-2: var(--color-teal-800); --contribution-tier-3: var(--color-teal-700); --contribution-tier-4: var(--color-teal-600); --contribution-tier-5: var(--color-teal-500);
+}
+.dark .contributions-grid[data-accent="cyan"] {
+  --contribution-tier-1: var(--color-cyan-950); --contribution-tier-2: var(--color-cyan-800); --contribution-tier-3: var(--color-cyan-700); --contribution-tier-4: var(--color-cyan-600); --contribution-tier-5: var(--color-cyan-500);
+}
+.dark .contributions-grid[data-accent="blue"] {
+  --contribution-tier-1: var(--color-blue-950); --contribution-tier-2: var(--color-blue-800); --contribution-tier-3: var(--color-blue-700); --contribution-tier-4: var(--color-blue-600); --contribution-tier-5: var(--color-blue-500);
+}
+.dark .contributions-grid[data-accent="indigo"] {
+  --contribution-tier-1: var(--color-indigo-950); --contribution-tier-2: var(--color-indigo-800); --contribution-tier-3: var(--color-indigo-700); --contribution-tier-4: var(--color-indigo-600); --contribution-tier-5: var(--color-indigo-500);
+}
+.dark .contributions-grid[data-accent="violet"] {
+  --contribution-tier-1: var(--color-violet-950); --contribution-tier-2: var(--color-violet-800); --contribution-tier-3: var(--color-violet-700); --contribution-tier-4: var(--color-violet-600); --contribution-tier-5: var(--color-violet-500);
+}
+.dark .contributions-grid[data-accent="rose"] {
+  --contribution-tier-1: var(--color-rose-950); --contribution-tier-2: var(--color-rose-800); --contribution-tier-3: var(--color-rose-700); --contribution-tier-4: var(--color-rose-600); --contribution-tier-5: var(--color-rose-500);
+}
+.dark .contributions-grid[data-accent="amber"] {
+  --contribution-tier-1: var(--color-amber-950); --contribution-tier-2: var(--color-amber-800); --contribution-tier-3: var(--color-amber-700); --contribution-tier-4: var(--color-amber-600); --contribution-tier-5: var(--color-amber-500);
+}
+
+.contribution-cell[data-tier="0"] { background-color: var(--contribution-tier-0); }
+.contribution-cell[data-tier="1"] { background-color: var(--contribution-tier-1); }
+.contribution-cell[data-tier="2"] { background-color: var(--contribution-tier-2); }
+.contribution-cell[data-tier="3"] { background-color: var(--contribution-tier-3); }
+.contribution-cell[data-tier="4"] { background-color: var(--contribution-tier-4); }
+.contribution-cell[data-tier="5"] { background-color: var(--contribution-tier-5); }
+
+@keyframes cell-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-cell-pop {
+  animation: cell-pop 380ms ease-out both;
+}
+
+@keyframes bar-rise {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+.animate-bar-rise {
+  transform-origin: bottom;
+  animation: bar-rise 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes chart-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.animate-chart-reveal {
+  animation: chart-reveal 1800ms cubic-bezier(0.33, 0, 0.15, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-cell-pop,
+  .animate-bar-rise,
+  .animate-chart-reveal {
+    animation: none;
+  }
+}
+
+/* Agent Thinking */
+.bui-agent-thinking-label {
+  color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    color-mix(in oklab, var(--bui-agent-thinking-tone) 55%, transparent) 30%,
+    var(--bui-agent-thinking-tone) 50%,
+    color-mix(in oklab, var(--bui-agent-thinking-tone) 55%, transparent) 70%
+  );
+  background-position: 200% center;
+  background-size: 300% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: ai-chat-text-shimmer 2.6s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes bui-agent-thinking-star {
+  0%,
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(0.8);
+    opacity: 0.9;
+  }
+}
+
+.bui-agent-thinking-star {
+  transform: scale(0);
+  animation-name: bui-agent-thinking-star;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bui-agent-thinking-dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.bui-agent-thinking-comet {
+  animation-name: bui-agent-thinking-dash;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bui-agent-thinking-label {
+    color: var(--bui-agent-thinking-tone);
+    background-image: none;
+    animation: none;
+  }
+  .bui-agent-thinking-star {
+    animation: none;
+    transform: none;
+    opacity: 0.7;
+  }
+  .bui-agent-thinking-comet {
+    animation: none;
+  }
+}
+
+.bui-agent-thinking-stars {
+  color: color-mix(in oklab, currentColor 75%, transparent);
+}
+
+.dark .bui-agent-thinking-stars {
+  color: inherit;
+}
+
+/* Composer Loader */
+@keyframes bui-composer-loader-dash {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bui-composer-loader-rect {
+    animation: none !important;
+  }
+}
+
+/* Composer mic listening state */
+@keyframes bui-composer-mic-bars {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.bui-composer-mic-bar {
+  animation: bui-composer-mic-bars 0.9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bui-composer-mic-bar {
+    animation: none;
+    transform: scaleY(0.7);
+  }
+}
+
+/* Shimmer sweep */
+@keyframes bui-badge-shimmer {
+  0% {
+    transform: translateX(0) skewX(-12deg);
+  }
+  40%,
+  100% {
+    transform: translateX(350%) skewX(-12deg);
+  }
+}
+
+.bui-badge-shimmer {
+  animation: bui-badge-shimmer 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bui-badge-shimmer {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Showcase card */
+.landing-showcase-card {
+  transition: box-shadow 280ms ease;
+}
+
+.landing-showcase-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  border: 1px solid var(--color-border-button-default);
+  border-radius: inherit;
+  transition:
+    border-color 280ms ease,
+    box-shadow 280ms ease;
+}
+
+.dark .landing-showcase-card::after {
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+@media (min-width: 640px) and (hover: hover) {
+  .landing-showcase-card:hover::after,
+  .landing-showcase-card:focus-within::after {
+    border-color: var(--color-border-button-hover);
+    box-shadow: inset 0 0 0 2px var(--color-border-button-hover);
+  }
+}
+
+/* Input Fields - soft neutral fill, rounded corners */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"] {
+  background-color: #e5e7eb !important; /* Neutral-200 fill */
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 0.625rem 0.875rem !important;
+  color: var(--color-text-primary) !important;
+  outline: none !important;
+  transition: all 150ms ease;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="search"]::placeholder {
+  color: #9ca3af !important; /* Neutral-400 */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus {
+  background-color: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+  box-shadow: 0 0 0 1px #d1d5db !important;
+}
+
+/* Primary Submit Button - Neutral charcoal fill */
+form button[type="submit"] {
+  background-color: #737373 !important; /* Charcoal/neutral-500 fill matching screenshot */
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  border: none !important;
+  font-weight: 500 !important;
+  padding: 0.625rem 1rem !important;
+  transition: background-color 150ms ease;
+}
+
+form button[type="submit"]:hover {
+  background-color: #525252 !important; /* Neutral-600 */
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  accent-color: #737373;
+}
+
+/* Card container outer border matching input stroke */
+div:has(> form) {
+  border-color: #e5e5e5 !important;
+}
+
+/* Primary "Sign in" button CTA - Brand Blue */
+form button[type="submit"],
+button[type="submit"] {
+  background-color: #007aff !important;
+  border: 1px solid #007aff !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: background-color 150ms ease, border-color 150ms ease !important;
+}
+
+form button[type="submit"]:hover,
+button[type="submit"]:hover {
+  background-color: #0062cc !important;
+  border-color: #0062cc !important;
+}
+
+/* Social provider buttons: match input border tone */
+button:not([type="submit"]):not([role="checkbox"]) {
+  border-color: #e5e5e5 !important;
+  border-radius: 8px !important;
+}
+
+button:not([type="submit"]):not([role="checkbox"]):hover {
+  background-color: #f9fafb !important;
+  border-color: #d4d4d4 !important;
+}
+
+/* Direct override for AuthCard submit button */
+div:has(> form) button,
+form button {
+  background-color: #007aff !important;
+  border-color: #007aff !important;
+  color: #ffffff !important;
+}
+
+div:has(> form) button:hover,
+form button:hover {
+  background-color: #0062cc !important;
+  border-color: #0062cc !important;
+}
+
+/* Strip all default BoardUI hover and focus rings from input containers */
+[data-slot="input-root"],
+[data-slot="control"],
+[data-slot="input-wrapper"],
+.bui-input-root,
+.bui-input-wrapper,
+div:has(> input) {
+  border-radius: 8px !important;
+  border: 1px solid transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+[data-slot="input-root"]:hover,
+[data-slot="control"]:hover,
+[data-slot="input-wrapper"]:hover,
+.bui-input-root:hover,
+.bui-input-wrapper:hover,
+div:has(> input):hover,
+[data-slot="input-root"][data-hovered],
+[data-slot="input-root"][data-focus-within],
+[data-slot="input-root"][data-focus-visible],
+.bui-input-root[data-hovered],
+.bui-input-root[data-focus-within],
+.bui-input-root[data-focus-visible],
+[data-hovered]:has(> input),
+[data-hovered]:has(input),
+[data-focus-visible]:has(input),
+div:has(> input[data-hovered]) {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* Ensure the input element itself manages the visual fill & curve */
+[data-slot="input-root"] input,
+[data-slot="control"] input,
+[data-slot="input-wrapper"] input,
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  border-radius: 8px !important;
+  outline: none !important;
+  border: 1px solid transparent !important;
+}
+
+/* Smooth, subtle hover and focus states for the inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"] {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 1px solid transparent !important;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease !important;
+}
+
+/* Soft hover effect */
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+input[type="search"]:hover {
+  background-color: #dcdfe4 !important;
+  border-color: #d1d5db !important; /* soft neutral-300 border */
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Focused state: clean brand focus ring with smooth radius */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus {
+  background-color: #ffffff !important;
+  border-color: #007aff !important;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15) !important;
+  outline: none !important;
+}
+
+/* ==========================================================================
+   BoardUI Table Primitives (.bui-table)
+   ========================================================================== */
+
+.bui-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+/* Header Cells */
+.bui-table th,
+.bui-table [role="columnheader"] {
+  background-color: #f9fafb;
+  color: #475467;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
+  letter-spacing: 0.025em;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #eaecf0;
+  white-space: nowrap;
+}
+
+/* Body Rows */
+.bui-table tbody tr,
+.bui-table [role="row"] {
+  border-bottom: 1px solid #f2f4f7;
+  transition: background-color 150ms ease;
+}
+
+.bui-table tbody tr:last-child,
+.bui-table [role="row"]:last-child {
+  border-bottom: none;
+}
+
+/* Row Hover State */
+.bui-table tbody tr:hover,
+.bui-table [role="row"][data-hovered] {
+  background-color: #f8fafc;
+}
+
+/* Selected Row State */
+.bui-table tbody tr[data-selected="true"],
+.bui-table [role="row"][aria-selected="true"] {
+  background-color: #eff6ff;
+}
+
+/* Body Cells - size md (default h-16 rows) */
+.bui-table td,
+.bui-table [role="gridcell"] {
+  padding: 1rem 1.5rem;
+  color: #101828;
+  vertical-align: middle;
+}
+
+/* Body Cells - size sm (h-12 rows) */
+.bui-table.bui-table-sm td,
+.bui-table.bui-table-sm [role="gridcell"] {
+  padding: 0.625rem 1.5rem;
+}
+
+.bui-table.bui-table-sm th,
+.bui-table.bui-table-sm [role="columnheader"] {
+  padding: 0.5rem 1.5rem;
+}
+
+/* ==========================================================================
+   BoardUI Segmented Control (Light pill track + white active thumb)
+   ========================================================================== */
+
+/* Outer pill container */
+[role="radiogroup"].bui-segmented-control,
+.bui-segmented-control {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f2f4f7;
+  padding: 3px;
+  border-radius: 8px;
+  gap: 2px;
+}
+
+/* Individual tab items */
+.bui-segmented-control [role="radio"],
+.bui-segmented-control button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: #667085;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Hover on inactive items */
+.bui-segmented-control [role="radio"]:not([data-selected="true"]):hover,
+.bui-segmented-control button:not([data-selected="true"]):hover {
+  color: #344054;
+}
+
+/* Selected White Floating Thumb */
+.bui-segmented-control [role="radio"][data-selected="true"],
+.bui-segmented-control [role="radio"][aria-checked="true"],
+.bui-segmented-control button[data-selected="true"] {
+  background-color: #ffffff;
+  color: #101828;
+  font-weight: 600;
+  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.06), 0 1px 3px 0 rgba(16, 24, 40, 0.1);
+}
