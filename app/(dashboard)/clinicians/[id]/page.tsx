@@ -111,66 +111,108 @@ export default function ClinicianProfilePage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* 3-Column Top Metric Row */}
+        {/* Clinician Individual Metrics Row (BoardUI Gradient Tile + Footer Band Pattern) */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="flex flex-col gap-1 rounded-[10px] border border-[#eaecf0] bg-white p-5 shadow-xs">
-            <span className="text-caption-1-medium text-text-tertiary">
-              Active Patient Load
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-display-3-bold text-text-primary">
-                {clinician.activeCaseload}
-              </span>
-              <span className="text-caption-1-regular text-text-secondary">
-                / {clinician.maxCaseload} max capacity
-              </span>
+          {/* Active Patient Load */}
+          <div className="flex flex-col justify-between overflow-hidden rounded-[10px] border border-[#eaecf0] bg-white shadow-xs transition hover:border-[#b2d5ff]">
+            <div className="flex flex-col gap-3 p-5">
+              <div className="flex items-center justify-between">
+                <span className="text-caption-1-medium text-text-tertiary">
+                  Active Patient Load
+                </span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-linear-to-br from-blue-500/10 to-indigo-500/10 text-[#007aff]">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-display-3-bold text-text-primary">
+                  {clinician.activeCaseload}
+                </span>
+                <span className="text-caption-1-regular text-text-secondary">
+                  / {clinician.maxCaseload} max
+                </span>
+                <span className="ml-auto rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-caption-2-bold font-semibold text-slate-700">
+                  {usagePercent}% Cap
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    usagePercent >= 90
+                      ? "bg-rose-500"
+                      : usagePercent >= 75
+                      ? "bg-amber-500"
+                      : "bg-[#007aff]"
+                  }`}
+                  style={{ width: `${Math.min(usagePercent, 100)}%` }}
+                />
+              </div>
             </div>
-            <div className="mt-2 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-300 ${
-                  usagePercent >= 90
-                    ? "bg-rose-500"
-                    : usagePercent >= 75
-                    ? "bg-amber-500"
-                    : "bg-[#007aff]"
-                }`}
-                style={{ width: `${Math.min(usagePercent, 100)}%` }}
-              />
+            <div className="border-t border-[#eaecf0] bg-[#fcfcfd] px-5 py-2.5">
+              <span className="text-caption-2-regular text-text-tertiary">
+                Caseload tracked within zone boundaries
+              </span>
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 rounded-[10px] border border-[#eaecf0] bg-white p-5 shadow-xs">
-            <span className="text-caption-1-medium text-text-tertiary">
-              Available Intake Slots
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-display-3-bold text-emerald-700">
-                {Math.max(0, clinician.maxCaseload - clinician.activeCaseload)}
-              </span>
-              <span className="text-caption-1-regular text-text-secondary">
-                open case slots
+          {/* Available Intake Slots */}
+          <div className="flex flex-col justify-between overflow-hidden rounded-[10px] border border-[#eaecf0] bg-white shadow-xs transition hover:border-[#b2d5ff]">
+            <div className="flex flex-col gap-3 p-5">
+              <div className="flex items-center justify-between">
+                <span className="text-caption-1-medium text-text-tertiary">
+                  Available Intake Slots
+                </span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-linear-to-br from-emerald-500/10 to-teal-500/10 text-emerald-600">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-display-3-bold text-emerald-700">
+                  {Math.max(0, clinician.maxCaseload - clinician.activeCaseload)}
+                </span>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-caption-2-bold font-semibold text-emerald-700">
+                  Ready
+                </span>
+              </div>
+            </div>
+            <div className="border-t border-[#eaecf0] bg-[#fcfcfd] px-5 py-2.5">
+              <span className="text-caption-2-regular text-text-tertiary">
+                Accepting urgent home health dispatches
               </span>
             </div>
-            <span className="mt-2 text-caption-1-regular text-emerald-600 font-medium">
-              Accepting urgent triage dispatches
-            </span>
           </div>
 
-          <div className="flex flex-col gap-1 rounded-[10px] border border-[#eaecf0] bg-white p-5 shadow-xs">
-            <span className="text-caption-1-medium text-text-tertiary">
-              Compliance & Credential Status
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-display-3-bold text-text-primary">
-                100%
-              </span>
-              <span className="text-caption-1-regular text-emerald-600 font-medium">
-                Verified
+          {/* Compliance & Credentials */}
+          <div className="flex flex-col justify-between overflow-hidden rounded-[10px] border border-[#eaecf0] bg-white shadow-xs transition hover:border-[#b2d5ff]">
+            <div className="flex flex-col gap-3 p-5">
+              <div className="flex items-center justify-between">
+                <span className="text-caption-1-medium text-text-tertiary">
+                  Compliance Status
+                </span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-linear-to-br from-purple-500/10 to-pink-500/10 text-purple-600">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-display-3-bold text-text-primary">
+                  100%
+                </span>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-caption-2-bold font-semibold text-emerald-700">
+                  Verified
+                </span>
+              </div>
+            </div>
+            <div className="border-t border-[#eaecf0] bg-[#fcfcfd] px-5 py-2.5">
+              <span className="text-caption-2-regular text-text-tertiary">
+                Next re-attestation scheduled 2027
               </span>
             </div>
-            <span className="mt-2 text-caption-1-regular text-text-secondary">
-              Next re-attestation: 2027-04-15
-            </span>
           </div>
         </div>
 
