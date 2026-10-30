@@ -12,6 +12,8 @@ import {
 } from "@/components/application/referrals/referral-badges";
 import { Breadcrumb, BreadcrumbItem } from "@/components/base/breadcrumb/breadcrumb";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ caseId: string }>;
 }
@@ -68,8 +70,8 @@ export default function ReferralDetailPage({ params }: PageProps) {
           <BreadcrumbItem current>{referralData.id}</BreadcrumbItem>
         </Breadcrumb>
 
-        {/* Clinical Case Header */}
-        <div className="flex flex-col justify-between gap-4 rounded-[10px] border border-[#eaecf0] bg-white p-6 shadow-sm lg:flex-row lg:items-center">
+        {/* Clinical Case Header (Clean - Unboxed, transparent background, no shadow) */}
+        <div className="flex flex-col justify-between gap-4 py-2 lg:flex-row lg:items-center">
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-display-4-medium tracking-tight text-text-primary">
