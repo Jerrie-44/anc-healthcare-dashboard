@@ -22,6 +22,7 @@ import {
   PriorityBadge,
   ExtractionBadge,
 } from "@/components/application/referrals/referral-badges";
+import { IntakeModal } from "@/components/application/referrals/intake-modal";
 
 const PAGE_SIZE = 4;
 
@@ -84,22 +85,8 @@ export default function ReferralsDirectoryPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => alert("Open AI Intake Modal")}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#007aff] px-4 py-2.5 text-body-medium font-medium text-white shadow-sm transition hover:bg-[#0062cc]"
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Upload Referral
-          </button>
+          {/* AI Intake Document Processing Modal */}
+          <IntakeModal />
         </div>
 
         {/* Filter Controls Bar with Segmented Control */}
@@ -119,7 +106,8 @@ export default function ReferralsDirectoryPage() {
           <div className="overflow-x-auto">
             <SegmentedControl
               aria-label="Filter referrals by triage status"
-              selectedKeys={[selectedStage]}
+              variant="solid"
+              selectedKeys={new Set([selectedStage])}
               onSelectionChange={(keys) => {
                 const selected = Array.from(keys)[0] as string;
                 if (selected) {
@@ -127,11 +115,11 @@ export default function ReferralsDirectoryPage() {
                 }
               }}
             >
-              <SegmentedControlItem id="All">All</SegmentedControlItem>
-              <SegmentedControlItem id="Ready for Matching">Ready for Matching</SegmentedControlItem>
-              <SegmentedControlItem id="Pending Review">Pending Review</SegmentedControlItem>
-              <SegmentedControlItem id="Matched">Matched</SegmentedControlItem>
-              <SegmentedControlItem id="On Hold">On Hold</SegmentedControlItem>
+              {stages.map((stage) => (
+                <SegmentedControlItem key={stage.id} id={stage.id}>
+                  {stage.label}
+                </SegmentedControlItem>
+              ))}
             </SegmentedControl>
           </div>
         </div>

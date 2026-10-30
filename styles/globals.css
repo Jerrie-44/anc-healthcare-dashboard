@@ -1090,3 +1090,72 @@ input[type="search"]:focus {
   font-weight: 600;
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.06), 0 1px 3px 0 rgba(16, 24, 40, 0.1);
 }
+
+/* High-specificity reset against injected browser extension styles */
+html body button:not([type="submit"]):not([role="checkbox"]):hover,
+html body button:hover,
+html body button[type="button"]:hover {
+  background-color: unset !important;
+}
+
+/* Explicit Primary Button Hover & Active */
+html body button.bg-\[\#007aff\]:hover,
+html body button[class*="bg-[#007aff]"]:hover {
+  background-color: #0062cc !important;
+  color: #ffffff !important;
+}
+
+html body button.bg-\[\#007aff\]:active,
+html body button[class*="bg-[#007aff]"]:active {
+  background-color: #0051a8 !important;
+  color: #ffffff !important;
+}
+
+/* Explicit Secondary/Outline Button Hover */
+html body button.bg-white:hover,
+html body button[class*="bg-white"]:hover {
+  background-color: #f9fafb !important;
+  color: #1d2939 !important;
+}
+
+/* Segmented Control Pill Hover Guard */
+html body [data-rac] button:hover {
+  background-color: unset !important;
+}
+
+/* ==========================================================
+   BUTTON HOVER & INJECTION OVERRIDES
+   ========================================================== */
+
+/* 1. Neutralize browser-extension & blanket button hover resets */
+html body button:not([type="submit"]):not([role="checkbox"]):hover,
+html body button:hover,
+html body button[type="button"]:hover {
+  background-color: unset !important;
+}
+
+/* 2. Force Primary Blue (#007aff) buttons to stay blue and darken on hover */
+html body button.bg-\[\#007aff\],
+html body button[class*="bg-[#007aff]"] {
+  background-color: #007aff !important;
+  color: #ffffff !important;
+}
+
+html body button.bg-\[\#007aff\]:hover,
+html body button[class*="bg-[#007aff]"]:hover {
+  background-color: #0062cc !important;
+  color: #ffffff !important;
+}
+
+html body button.bg-\[\#007aff\]:active,
+html body button[class*="bg-[#007aff]"]:active {
+  background-color: #0051a8 !important;
+  color: #ffffff !important;
+}
+
+/* 3. Force Secondary / White buttons to stay off-white on hover */
+html body button.bg-white:hover,
+html body button[class*="bg-white"]:hover {
+  background-color: #f9fafb !important;
+  color: #1d2939 !important;
+}

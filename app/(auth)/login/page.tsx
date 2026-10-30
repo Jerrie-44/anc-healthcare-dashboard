@@ -26,11 +26,10 @@ const SLIDES = [
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [email, setEmail] = useState("clinician@hospital.org");
+  const [password, setPassword] = useState("••••••••••••");
+  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Auto-advance the carousel every 5 seconds
@@ -41,27 +40,22 @@ export default function LoginPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-
-    if (!email || !password) {
-      setError("Please fill in all fields.");
-      return;
-    }
-
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      router.push("/overview");
-    }, 500);
+
+    try {
+      router.push("/referrals");
+    } catch {
+      window.location.href = "/referrals";
+    }
   };
 
   return (
     <div className="grid min-h-screen w-full grid-cols-1 bg-white lg:grid-cols-2">
-      {/* Left Column: Vertically & Horizontally Balanced Form Column */}
+      {/* Left Column: Form Column */}
       <div className="flex h-full w-full flex-col items-center justify-between p-8 sm:p-12 lg:p-16">
-        {/* Brand Header - Centered with the max-w-[400px] column */}
+        {/* Brand Header */}
         <div className="w-full max-w-[400px] text-left">
           <span className="text-headline-semibold tracking-tight text-text-primary">
             ANC Healthcare
@@ -79,17 +73,11 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {error && (
-            <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-2.5 text-body-medium text-red-600">
-              {error}
-            </div>
-          )}
-
           <form onSubmit={handleSignIn} className="mt-8 flex flex-col gap-4 text-left">
             {/* Email Field */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="email" className="text-body-medium text-text-primary">
-                Email <span className="text-red-500">*</span>
+                Email
               </label>
               <input
                 id="email"
@@ -99,14 +87,13 @@ export default function LoginPage() {
                 placeholder="you@company.com"
                 disabled={loading}
                 className="w-full"
-                required
               />
             </div>
 
             {/* Password Field */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="password" className="text-body-medium text-text-primary">
-                Password <span className="text-red-500">*</span>
+                Password
               </label>
               <input
                 id="password"
@@ -116,7 +103,6 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 disabled={loading}
                 className="w-full"
-                required
               />
             </div>
 
@@ -158,7 +144,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer Legal Note - Centered and aligned with the max-w-[400px] column */}
+        {/* Footer Legal Note */}
         <div className="w-full max-w-[400px] text-left">
           <p className="text-caption-1-regular text-text-tertiary">
             By clicking sign in, you agree to our Terms of Service and Privacy Policy.
@@ -166,7 +152,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right Column: 20px Inset (Reduced by 50% from 40px) */}
+      {/* Right Column: Visual Carousel Inset */}
       <div className="hidden h-screen w-full py-[20px] pr-[20px] pl-[10px] lg:block">
         <div className="relative h-full w-full overflow-hidden rounded-[12px] shadow-sm">
           {SLIDES.map((slide, idx) => (
@@ -190,7 +176,7 @@ export default function LoginPage() {
           {/* Vignette Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-          {/* Bottom Message & Interactive Indicators */}
+          {/* Bottom Message & Indicators */}
           <div className="absolute bottom-10 left-8 right-8 z-10 flex flex-col items-center gap-3.5 text-center text-white">
             <p className="text-headline-medium drop-shadow-md transition-all duration-300">
               {SLIDES[currentSlide].caption}
