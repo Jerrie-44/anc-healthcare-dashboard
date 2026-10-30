@@ -10,6 +10,8 @@ import { MOCK_CLINICIANS, Clinician } from "@/types/clinician";
 import { PriorityBadge } from "@/components/application/referrals/referral-badges";
 import { Breadcrumb, BreadcrumbItem } from "@/components/base/breadcrumb/breadcrumb";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{ caseId: string }>;
 }
@@ -81,8 +83,8 @@ export default function ReferralMatchPage({ params }: PageProps) {
           <BreadcrumbItem current>Clinician Matching</BreadcrumbItem>
         </Breadcrumb>
 
-        {/* Top Header Card */}
-        <div className="flex flex-col justify-between gap-4 rounded-[10px] border border-[#eaecf0] bg-white p-6 shadow-sm lg:flex-row lg:items-center">
+        {/* Top Header (Clean - No container card, fill color, or shadow) */}
+        <div className="flex flex-col justify-between gap-4 py-2 lg:flex-row lg:items-center">
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-display-4-medium tracking-tight text-text-primary">
@@ -154,7 +156,7 @@ export default function ReferralMatchPage({ params }: PageProps) {
 
                 <div className="rounded-[8px] border border-[#eaecf0] bg-slate-50 p-3">
                   <span className="text-caption-1-medium text-text-tertiary">
-                    Patient Address & Travel Zone
+                    Patient Address &amp; Travel Zone
                   </span>
                   <p className="mt-0.5 text-body-2-medium text-text-primary">
                     Springfield Metro (Zone 2)
@@ -205,7 +207,7 @@ export default function ReferralMatchPage({ params }: PageProps) {
                 Matched Clinicians ({filteredClinicians.length})
               </h2>
               <span className="text-caption-1-regular text-text-tertiary">
-                Sorted by AI Fit & Travel Distance
+                Sorted by AI Fit &amp; Travel Distance
               </span>
             </div>
 
@@ -229,7 +231,7 @@ export default function ReferralMatchPage({ params }: PageProps) {
                           {clinician.name}
                         </span>
                         <span className="font-mono text-caption-1-regular text-text-tertiary">
-                          {clinician.id}
+                          ({clinician.id})
                         </span>
                         
                         {/* Match Score Badge */}
@@ -295,7 +297,7 @@ export default function ReferralMatchPage({ params }: PageProps) {
                         {isAssigning && isSelected
                           ? "Assigning..."
                           : isSelected
-                          ? "Assign Clinician &rarr;"
+                          ? "Assign Clinician \u2192"
                           : "Select Candidate"}
                       </button>
                     </div>
