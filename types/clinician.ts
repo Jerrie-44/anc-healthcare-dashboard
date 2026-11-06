@@ -113,4 +113,4 @@ export interface Clinician {
       email: "g.hayes@anc-health.org",
       coverageZone: "Regional Mobile (Zones 1-5)",
     },
-  ];
+  ]

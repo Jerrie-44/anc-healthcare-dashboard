@@ -1,4 +1,6 @@
 // app/page.tsx
-export default function Home() {
-  return null;
+import { redirect } from "next/navigation";
+
+export default function RootHomePage() {
+  redirect("/overview");
 }

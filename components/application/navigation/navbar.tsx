@@ -29,14 +29,19 @@ function NavbarContent() {
   }
 
   const isCaregiversActive =
-    pathname.startsWith("/clinicians") || pathname.startsWith("/caregivers");
+    pathname.startsWith("/caregivers") || pathname.startsWith("/clinicians");
+
+  const isPostMatchActive = pathname.startsWith("/post-match");
+
+  const isPlacementsActive =
+    pathname.startsWith("/placements") || pathname.startsWith("/schedule");
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#eaecf0] bg-white font-['Clash_Grotesk']">
       <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between px-6 lg:px-10">
         
         {/* Brand / Logo */}
-        <Link href="/referrals" className="flex items-center gap-2.5">
+        <Link href="/overview" className="flex items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#007aff] text-white font-medium text-[16px]">
             +
           </div>
@@ -47,6 +52,17 @@ function NavbarContent() {
 
         {/* Primary Navigation */}
         <nav className="flex items-center gap-1 sm:gap-2">
+          <Link
+            href="/overview"
+            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
+              pathname === "/overview" || pathname === "/"
+                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
+                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
+            }`}
+          >
+            Overview
+          </Link>
+
           <Link
             href="/referrals"
             className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
@@ -85,14 +101,14 @@ function NavbarContent() {
             {isCaregiversMenuOpen && (
               <div className="absolute left-0 mt-1.5 w-60 rounded-[8px] border border-[#eaecf0] bg-white p-1.5 shadow-lg z-50">
                 <Link
-                  href="/clinicians"
+                  href="/caregivers"
                   className={`block rounded-[6px] px-3 py-2 text-[14px] transition-colors ${
-                    pathname === "/clinicians"
+                    pathname === "/caregivers"
                       ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
                       : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
                   }`}
                 >
-                  All Candidates &amp; Roster
+                  All Caregivers &amp; Roster
                 </Link>
                 <Link
                   href="/caregivers/voice-screening"
@@ -108,25 +124,27 @@ function NavbarContent() {
             )}
           </div>
 
+          {/* New Module: Post-Match Processing & Credentialing */}
           <Link
-            href="/schedule"
+            href="/post-match"
             className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-              pathname.startsWith("/schedule")
+              isPostMatchActive
+                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
+                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
+            }`}
+          >
+            Post-Match Processing
+          </Link>
+
+          <Link
+            href="/placements"
+            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
+              isPlacementsActive
                 ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
                 : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
             }`}
           >
             Placements &amp; Schedule
-          </Link>
-          <Link
-            href="/analytics"
-            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-              pathname.startsWith("/analytics")
-                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-            }`}
-          >
-            Analytics
           </Link>
         </nav>
 
