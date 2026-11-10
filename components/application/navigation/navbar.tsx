@@ -1,165 +1,91 @@
 // components/application/navigation/navbar.tsx
 "use client";
 
-import { Suspense, useState, useRef, useEffect } from "react";
+import { Suspense } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
+const NAV_ITEMS = [
+  { 
+    label: "Cases Intake", 
+    href: "/cases-intake",
+    matchRoutes: ["/cases-intake", "/referrals", "/care-requirements"] 
+  },
+  { 
+    label: "Care Givers", 
+    href: "/care-givers",
+    matchRoutes: ["/care-givers", "/caregivers", "/talent-database", "/clinicians"] 
+  },
+];
+
 function NavbarContent() {
   const pathname = usePathname();
-  const [isCaregiversMenuOpen, setIsCaregiversMenuOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsCaregiversMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    setIsCaregiversMenuOpen(false);
-  }, [pathname]);
 
   if (pathname === "/login" || pathname.startsWith("/screening/")) {
     return null;
   }
 
-  const isCaregiversActive =
-    pathname.startsWith("/caregivers") || pathname.startsWith("/clinicians");
-
-  const isPostMatchActive = pathname.startsWith("/post-match");
-
-  const isPlacementsActive =
-    pathname.startsWith("/placements") || pathname.startsWith("/schedule");
-
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#eaecf0] bg-white font-['Clash_Grotesk']">
+    <header className="sticky top-0 z-40 w-full border-b border-[#D0D5DD] bg-white">
       <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between px-6 lg:px-10">
         
-        {/* Brand / Logo */}
-        <Link href="/overview" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#007aff] text-white font-medium text-[16px]">
+        {/* Brand */}
+        <Link href="/cases-intake" className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#007AFF] text-white font-medium text-[16px] shadow-xs">
             +
           </div>
-          <span className="text-[16px] font-[500] text-[#101828] tracking-tight">
-            Advanced Nursing Care
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[16px] font-[500] text-[#101828] tracking-tight">
+              ANC Healthcare
+            </span>
+            <span className="rounded bg-[#F2F4F7] px-2 py-0.5 text-[11px] font-medium text-[#667085]">
+              Intake &amp; Match
+            </span>
+          </div>
         </Link>
 
-        {/* Primary Navigation */}
+        {/* 2 Primary Pillars Only */}
         <nav className="flex items-center gap-1 sm:gap-2">
-          <Link
-            href="/overview"
-            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-              pathname === "/overview" || pathname === "/"
-                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-            }`}
-          >
-            Overview
-          </Link>
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.matchRoutes.some((route) => 
+              pathname === route || pathname.startsWith(`${route}/`)
+            );
 
-          <Link
-            href="/referrals"
-            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-              pathname.startsWith("/referrals")
-                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-            }`}
-          >
-            Cases &amp; Referrals
-          </Link>
-
-          {/* Care givers Dropdown Menu */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              type="button"
-              onClick={() => setIsCaregiversMenuOpen((prev) => !prev)}
-              className={`inline-flex items-center gap-1 rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-                isCaregiversActive
-                  ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                  : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-              }`}
-            >
-              <span>Care givers</span>
-              <svg
-                className={`h-4 w-4 text-[#667085] transition-transform duration-200 ${
-                  isCaregiversMenuOpen ? "rotate-180 text-[#007aff]" : ""
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-[8px] px-4 py-2 text-[14px] transition-colors ${
+                  isActive
+                    ? "bg-[#007AFF]/10 text-[#007AFF] font-[500]"
+                    : "text-[#344054] hover:bg-[#F2F4F7] hover:text-[#101828] font-[400]"
                 }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {isCaregiversMenuOpen && (
-              <div className="absolute left-0 mt-1.5 w-60 rounded-[8px] border border-[#eaecf0] bg-white p-1.5 shadow-lg z-50">
-                <Link
-                  href="/caregivers"
-                  className={`block rounded-[6px] px-3 py-2 text-[14px] transition-colors ${
-                    pathname === "/caregivers"
-                      ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                      : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-                  }`}
-                >
-                  All Caregivers &amp; Roster
-                </Link>
-                <Link
-                  href="/caregivers/voice-screening"
-                  className={`block rounded-[6px] px-3 py-2 text-[14px] transition-colors ${
-                    pathname.startsWith("/caregivers/voice-screening")
-                      ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                      : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-                  }`}
-                >
-                  Voice Screening Sessions
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* New Module: Post-Match Processing & Credentialing */}
-          <Link
-            href="/post-match"
-            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-              isPostMatchActive
-                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-            }`}
-          >
-            Post-Match Processing
-          </Link>
-
-          <Link
-            href="/placements"
-            className={`rounded-[8px] px-3 py-1.5 text-[14px] font-[400] transition-colors ${
-              isPlacementsActive
-                ? "bg-[#007aff]/10 text-[#007aff] font-[500]"
-                : "text-[#344054] hover:bg-[#f2f4f7] hover:text-[#101828]"
-            }`}
-          >
-            Placements &amp; Schedule
-          </Link>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* User Identity */}
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f2f4f7] text-[12px] font-medium text-[#007aff] border border-[#eaecf0]">
-            DR
-          </div>
-          <div className="hidden lg:flex flex-col text-left">
-            <span className="text-[14px] font-[500] text-[#101828] leading-tight">
-              Dr. R. Sterling
-            </span>
-            <span className="text-[12px] text-[#667085]">
-              Lead Clinical Dispatcher
-            </span>
+        {/* Integrated Match Engine Status Indicator & User Profile */}
+        <div className="flex items-center gap-3">
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#34C759]/10 px-2.5 py-1 text-[12px] font-medium text-[#34C759]">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-pulse" />
+            Match Engine Automated
+          </span>
+
+          <div className="flex items-center gap-2 pl-2 border-l border-[#EAECF0]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F2F4F7] text-[12px] font-medium text-[#007AFF] border border-[#EAECF0]">
+              OP
+            </div>
+            <div className="hidden lg:flex flex-col text-left">
+              <span className="text-[13px] font-[500] text-[#101828] leading-tight">
+                Human Reviewer
+              </span>
+              <span className="text-[11px] text-[#667085]">
+                Validation Dispatch
+              </span>
+            </div>
           </div>
         </div>
 
@@ -170,7 +96,7 @@ function NavbarContent() {
 
 export function Navbar() {
   return (
-    <Suspense fallback={<div className="h-16 w-full border-b border-[#eaecf0] bg-white font-['Clash_Grotesk']" />}>
+    <Suspense fallback={<div className="h-16 w-full border-b border-[#D0D5DD] bg-white" />}>
       <NavbarContent />
     </Suspense>
   );
