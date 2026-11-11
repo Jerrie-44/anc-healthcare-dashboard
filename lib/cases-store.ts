@@ -1,26 +1,20 @@
 // lib/cases-store.ts
 import { CaseIntakeRecord } from "@/types/cases-intake";
-import { INITIAL_BATCHES } from "@/lib/cases-intake-service";
 
 const STORAGE_KEY = "anc_cases_intake_records";
-const RECENTLY_VALIDATED_KEY = "anc_recently_validated_ids";
+const RECENT_KEY = "anc_recently_validated_ids";
 
 export function getStoredCases(): CaseIntakeRecord[] {
-  if (typeof window === "undefined") {
-    return INITIAL_BATCHES.flatMap((b) => b.cases);
-  }
+  if (typeof window === "undefined") return [];
 
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    const defaults = INITIAL_BATCHES.flatMap((b) => b.cases);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
-    return defaults;
-  }
+  if (!raw) return [];
 
   try {
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return INITIAL_BATCHES.flatMap((b) => b.cases);
+    return [];
   }
 }
 
@@ -30,28 +24,24 @@ export function saveStoredCases(cases: CaseIntakeRecord[]): void {
 }
 
 export function upsertValidatedCases(newCases: CaseIntakeRecord[]): void {
+  if (typeof window === "undefined") return;
+
   const current = getStoredCases();
-  const existingMap = new Map(current.map((c) => [c.id, c]));
+  const map = new Map<string, CaseIntakeRecord>();
 
-  newCases.forEach((nc) => {
-    existingMap.set(nc.id, nc);
-  });
+  current.forEach((c) => map.set(c.id, c));
+  newCases.forEach((c) => map.set(c.id, c));
 
-  const updated = Array.from(existingMap.values());
-  saveStoredCases(updated);
-
-  // Store recently validated IDs for brief highlight feedback
-  if (typeof window !== "undefined") {
-    const ids = newCases.filter((c) => c.status === "Validated").map((c) => c.id);
-    sessionStorage.setItem(RECENTLY_VALIDATED_KEY, JSON.stringify(ids));
-  }
+  const merged = Array.from(map.values());
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+  localStorage.setItem(RECENT_KEY, JSON.stringify(newCases.map((c) => c.id)));
 }
 
 export function popRecentlyValidatedIds(): string[] {
   if (typeof window === "undefined") return [];
-  const raw = sessionStorage.getItem(RECENTLY_VALIDATED_KEY);
+  const raw = localStorage.getItem(RECENT_KEY);
   if (!raw) return [];
-  sessionStorage.removeItem(RECENTLY_VALIDATED_KEY);
+  localStorage.removeItem(RECENT_KEY);
   try {
     return JSON.parse(raw);
   } catch {

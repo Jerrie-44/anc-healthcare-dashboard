@@ -44,10 +44,16 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
+    // Clear stored referral cases so user lands on the empty state screen upon login
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("anc_cases_intake_records");
+      localStorage.removeItem("anc_recently_validated_ids");
+    }
+
     try {
-      router.push("/referrals");
+      router.push("/cases-intake");
     } catch {
-      window.location.href = "/referrals";
+      window.location.href = "/cases-intake";
     }
   };
 
@@ -86,7 +92,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 disabled={loading}
-                className="w-full"
+                className="w-full rounded-lg border border-[#D0D5DD] px-3.5 py-2.5 text-[#101828] shadow-xs focus:border-[#007AFF] focus:outline-none"
               />
             </div>
 
@@ -102,7 +108,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 disabled={loading}
-                className="w-full"
+                className="w-full rounded-lg border border-[#D0D5DD] px-3.5 py-2.5 text-[#101828] shadow-xs focus:border-[#007AFF] focus:outline-none"
               />
             </div>
 

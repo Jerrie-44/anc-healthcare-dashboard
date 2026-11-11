@@ -13,8 +13,8 @@ const NAV_ITEMS = [
   },
   { 
     label: "Care Givers", 
-    href: "/care-givers",
-    matchRoutes: ["/care-givers", "/caregivers", "/talent-database", "/clinicians"] 
+    href: "/caregivers",
+    matchRoutes: ["/caregivers", "/care-givers", "/talent-database", "/clinicians"] 
   },
 ];
 
@@ -26,7 +26,7 @@ function NavbarContent() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#D0D5DD] bg-white">
+    <header className="sticky top-0 z-40 w-full border-b border-[#D0D5DD] bg-white font-sans">
       <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between px-6 lg:px-10">
         
         {/* Brand */}
@@ -34,14 +34,9 @@ function NavbarContent() {
           <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-[#007AFF] text-white font-medium text-[16px] shadow-xs">
             +
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[16px] font-[500] text-[#101828] tracking-tight">
-              ANC Healthcare
-            </span>
-            <span className="rounded bg-[#F2F4F7] px-2 py-0.5 text-[11px] font-medium text-[#667085]">
-              Intake &amp; Match
-            </span>
-          </div>
+          <span className="text-[16px] font-[500] text-[#101828] tracking-tight">
+            ANC Healthcare
+          </span>
         </Link>
 
         {/* 2 Primary Pillars Only */}
@@ -67,25 +62,18 @@ function NavbarContent() {
           })}
         </nav>
 
-        {/* Integrated Match Engine Status Indicator & User Profile */}
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#34C759]/10 px-2.5 py-1 text-[12px] font-medium text-[#34C759]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#34C759] animate-pulse" />
-            Match Engine Automated
-          </span>
-
-          <div className="flex items-center gap-2 pl-2 border-l border-[#EAECF0]">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F2F4F7] text-[12px] font-medium text-[#007AFF] border border-[#EAECF0]">
-              OP
-            </div>
-            <div className="hidden lg:flex flex-col text-left">
-              <span className="text-[13px] font-[500] text-[#101828] leading-tight">
-                Human Reviewer
-              </span>
-              <span className="text-[11px] text-[#667085]">
-                Validation Dispatch
-              </span>
-            </div>
+        {/* User Profile */}
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F2F4F7] text-[12px] font-medium text-[#007AFF] border border-[#EAECF0]">
+            OP
+          </div>
+          <div className="hidden lg:flex flex-col text-left">
+            <span className="text-[13px] font-[500] text-[#101828] leading-tight">
+              Human Reviewer
+            </span>
+            <span className="text-[11px] text-[#667085]">
+              Validation Dispatch
+            </span>
           </div>
         </div>
 

@@ -17,12 +17,12 @@ import { AIMatchingAnimation } from "@/components/application/cases-intake/ai-ma
 import { ValidationProcessScreen } from "@/components/application/cases-intake/validation-process-screen";
 
 type WorkflowStep = 
-  | "upload"                // Step 1: Upload dropzone only
-  | "ai_review"             // Step 1: ~3s per stage verification animation
-  | "extracted_patients"    // Step 1: Patient review table with inline corrections
-  | "ai_matching"           // Step 2: ~3s per stage pairing animation
-  | "matching_results"      // Step 3: Two-panel interactive workspace
-  | "validating";           // Step 4: Full-page validation animation & redirect
+  | "upload"
+  | "ai_review"
+  | "extracted_patients"
+  | "ai_matching"
+  | "matching_results"
+  | "validating";
 
 export default function NewReferralWorkflowPage() {
   const router = useRouter();
@@ -69,14 +69,14 @@ export default function NewReferralWorkflowPage() {
         id: `CASE-2026-902`,
         patientName: "Beatrice Morales",
         dob: "1962-03-29",
-        zipCode: "",
+        zipCode: "15217",
         disciplineNeeded: "Home Health Aide (HHA)",
         hoursPerWeek: 20,
         nonSmokingHousehold: false,
         clinicalDirectives: "Bathing assistance, meal prep, and transfer oversight.",
-        requirementStatus: "Needs Information",
-        missingFields: ["Patient ZIP Code"],
-        matchingStatus: "Needs Information",
+        requirementStatus: "Complete",
+        missingFields: [],
+        matchingStatus: "Recommended",
       },
       {
         id: `CASE-2026-903`,
@@ -178,7 +178,6 @@ export default function NewReferralWorkflowPage() {
         };
       }
 
-      // Automatically select highest-ranked eligible recommendation (Rank #1)
       const topMatch = candidates[0];
 
       return {
@@ -215,16 +214,13 @@ export default function NewReferralWorkflowPage() {
     );
   };
 
-  // Explicit confirmation initiates the dedicated validation animation screen
   const handleInitiateValidation = () => {
     setIsSubmittingValidation(true);
     setIsValidationConfirmOpen(false);
     setStep("validating");
   };
 
-  // Final Persistence & Automatic Navigation back to Cases Overview
   const handleValidationCompleteAndRedirect = (validatedRecords: ExtractedPatientCase[]) => {
-    // Transform ExtractedPatientCase[] into CaseIntakeRecord[] for Cases Overview persistence
     const casesToStore: CaseIntakeRecord[] = validatedRecords.map((vp) => {
       const isVal = vp.matchingStatus === "Validated" && vp.selectedCaregiver;
       return {
@@ -262,7 +258,6 @@ export default function NewReferralWorkflowPage() {
   }, [patients, selectedPatientId]);
 
   const totalPatientsCount = patients.length;
-  const patientsWithRecommendationsCount = patients.filter((p) => (p.availableCandidates?.length || 0) > 0).length;
   const patientsWithSelectedMatchesCount = patients.filter((p) => p.selectionStatus === "Match Selected" && p.selectedCaregiverId).length;
   const unmatchedCount = patients.filter((p) => p.matchingStatus === "Unmatched").length;
   const needsAttentionCount = patients.filter((p) => p.matchingStatus === "Needs Information" || p.requirementStatus === "Needs Information").length;
@@ -485,7 +480,7 @@ export default function NewReferralWorkflowPage() {
         {step === "matching_results" && (
           <div className="flex flex-col gap-6">
             
-            {/* Header & Compact Metrics */}
+            {/* Header & Compact Metrics Strip */}
             <div className="flex flex-col justify-between gap-4 border-b border-[#EAECF0] pb-5 sm:flex-row sm:items-center">
               <div>
                 <h1 className="text-[26px] font-semibold tracking-tight text-[#101828]">
@@ -496,23 +491,11 @@ export default function NewReferralWorkflowPage() {
                 </p>
               </div>
 
-              {/* Compact Metrics Strip */}
+              {/* Compact Metrics Strip: Only Total */}
               <div className="flex items-center gap-3">
                 <div className="rounded-lg border border-[#EAECF0] bg-white px-3 py-2 text-right shadow-2xs">
                   <span className="text-[10px] uppercase font-bold text-[#667085] block">Total</span>
                   <span className="text-[16px] font-bold text-[#101828]">{totalPatientsCount}</span>
-                </div>
-                <div className="rounded-lg border border-[#EAECF0] bg-white px-3 py-2 text-right shadow-2xs">
-                  <span className="text-[10px] uppercase font-bold text-[#007AFF] block">Recommended</span>
-                  <span className="text-[16px] font-bold text-[#007AFF]">{patientsWithRecommendationsCount}</span>
-                </div>
-                <div className="rounded-lg border border-[#EAECF0] bg-white px-3 py-2 text-right shadow-2xs">
-                  <span className="text-[10px] uppercase font-bold text-[#34C759] block">Selected</span>
-                  <span className="text-[16px] font-bold text-[#34C759]">{patientsWithSelectedMatchesCount}</span>
-                </div>
-                <div className="rounded-lg border border-[#EAECF0] bg-white px-3 py-2 text-right shadow-2xs">
-                  <span className="text-[10px] uppercase font-bold text-[#FF3B30] block">Unmatched</span>
-                  <span className="text-[16px] font-bold text-[#FF3B30]">{unmatchedCount}</span>
                 </div>
               </div>
             </div>
@@ -603,37 +586,7 @@ export default function NewReferralWorkflowPage() {
                 {activePatient ? (
                   <div className="flex flex-col gap-5">
                     
-                    {/* Active Requirement Profile Box */}
-                    <div className="rounded-lg border border-[#EAECF0] bg-[#F8FAFC] p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#667085]">
-                            Active Requirement Profile
-                          </span>
-                          <h3 className="text-[16px] font-semibold text-[#101828] mt-0.5">
-                            {activePatient.patientName} <span className="font-mono text-[12px] text-[#667085]">({activePatient.id})</span>
-                          </h3>
-                        </div>
-
-                        <span className="rounded bg-white px-2.5 py-1 text-[12px] font-medium border border-[#EAECF0] text-[#101828]">
-                          ZIP {activePatient.zipCode || "Missing"} &bull; {activePatient.hoursPerWeek} hrs/wk
-                        </span>
-                      </div>
-
-                      <p className="mt-2 text-[12px] text-[#475467]">
-                        {activePatient.clinicalDirectives}
-                      </p>
-
-                      <div className="mt-2 flex flex-wrap gap-2 text-[11px]">
-                        <span className="rounded bg-white px-2 py-0.5 border border-[#EAECF0] text-[#101828]">
-                          Discipline: <strong>{activePatient.disciplineNeeded}</strong>
-                        </span>
-                        <span className="rounded bg-white px-2 py-0.5 border border-[#EAECF0] text-[#101828]">
-                          Policy: <strong>{activePatient.nonSmokingHousehold ? "Non-Smoker Household" : "No Smoking Restrictions"}</strong>
-                        </span>
-                      </div>
-                    </div>
-
+                    {/* Right Panel Header */}
                     <div className="border-b border-[#EAECF0] pb-2 flex items-center justify-between">
                       <div>
                         <h3 className="text-[15px] font-semibold text-[#101828]">
@@ -683,7 +636,7 @@ export default function NewReferralWorkflowPage() {
                       </div>
                     )}
 
-                    {/* Caregiver Cards */}
+                    {/* Candidate Recommendation Cards */}
                     {activePatient.availableCandidates && activePatient.availableCandidates.length > 0 && (
                       <div className="space-y-3">
                         <AnimatePresence>
