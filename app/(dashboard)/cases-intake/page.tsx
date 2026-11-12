@@ -73,12 +73,6 @@ export default function CasesOverviewPage() {
     return (
       <div className="min-h-screen bg-[#F8FAFC] py-8 font-sans">
         <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-6 px-6 lg:px-10">
-          <div className="border-b border-[#EAECF0] pb-6">
-            <h1 className="text-[28px] font-semibold tracking-tight text-[#101828]">Cases</h1>
-            <p className="mt-1 text-[14px] text-[#475467]">
-              View and manage patient care cases and their caregiver assignments.
-            </p>
-          </div>
           <div className="h-64 rounded-xl border border-[#EAECF0] bg-white p-12 text-center text-[#667085] shadow-xs" />
         </main>
       </div>
@@ -90,9 +84,6 @@ export default function CasesOverviewPage() {
     return (
       <div className="min-h-screen bg-[#F8FAFC] py-8 font-sans">
         <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-6 px-6 lg:px-10">
-          <div className="border-b border-[#EAECF0] pb-6">
-            <h1 className="text-[28px] font-semibold tracking-tight text-[#101828]">Cases</h1>
-          </div>
           <div className="my-12 flex flex-col items-center justify-center rounded-2xl border border-[#FF3B30]/20 bg-white p-12 text-center shadow-xs">
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#FF3B30]/10 text-[#FF3B30]">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,10 +110,6 @@ export default function CasesOverviewPage() {
     return (
       <div className="min-h-screen bg-[#F8FAFC] py-8 font-sans">
         <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-6 px-6 lg:px-10">
-          <div className="border-b border-[#EAECF0] pb-6">
-            <div className="h-8 w-32 animate-pulse rounded bg-[#EAECF0]" />
-            <div className="mt-2 h-4 w-72 animate-pulse rounded bg-[#EAECF0]" />
-          </div>
           <div className="flex h-80 items-center justify-center rounded-xl border border-[#EAECF0] bg-white text-[14px] text-[#667085] shadow-xs">
             Retrieving case database...
           </div>
@@ -131,21 +118,11 @@ export default function CasesOverviewPage() {
     );
   }
 
-  // 4. Initial Empty State Screen (Spacious, single concise intro sentence)
+  // 4. Initial Empty State Screen (Clean, without page title header)
   if (cases.length === 0) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] py-8 font-sans">
         <main className="mx-auto flex w-full max-w-[1360px] flex-col gap-6 px-6 lg:px-10">
-          
-          <div className="border-b border-[#EAECF0] pb-6">
-            <h1 className="text-[28px] font-semibold tracking-tight text-[#101828]">
-              Cases
-            </h1>
-            <p className="mt-1 text-[14px] text-[#475467]">
-              View and manage patient care cases and their caregiver assignments.
-            </p>
-          </div>
-
           <div className="my-24 flex w-full flex-col items-center justify-center text-center">
             <h2 className="max-w-xl text-[26px] font-semibold tracking-tight text-[#101828]">
               Ready to find the right caregivers?
@@ -166,7 +143,6 @@ export default function CasesOverviewPage() {
               </Link>
             </div>
           </div>
-
         </main>
       </div>
     );

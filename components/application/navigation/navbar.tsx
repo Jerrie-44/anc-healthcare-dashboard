@@ -16,6 +16,11 @@ const NAV_ITEMS = [
     href: "/caregivers",
     matchRoutes: ["/caregivers", "/care-givers", "/talent-database", "/clinicians"] 
   },
+  { 
+    label: "Post-Matchmaking", 
+    href: "/post-matchmaking",
+    matchRoutes: ["/post-matchmaking"] 
+  },
 ];
 
 function NavbarContent() {
@@ -39,7 +44,7 @@ function NavbarContent() {
           </span>
         </Link>
 
-        {/* 2 Primary Pillars Only */}
+        {/* 3 Primary Navigation Pillars */}
         <nav className="flex items-center gap-1 sm:gap-2">
           {NAV_ITEMS.map((item) => {
             const isActive = item.matchRoutes.some((route) => 
